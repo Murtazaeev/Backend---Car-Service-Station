@@ -1,8 +1,6 @@
 package com.CarServieStation.backend.dto;
 
-
 import com.CarServieStation.backend.entity.Role;
-import jakarta.persistence.Column;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
