@@ -2,16 +2,14 @@ package com.CarServieStation.backend.entity;
 
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import java.util.Collection;
 import java.util.List;
+import java.util.Date;
 
 @Data
 @Builder
@@ -19,6 +17,8 @@ import java.util.List;
 @AllArgsConstructor
 @Entity
 @Table(name = "_user")
+@Setter
+@Getter
 public class User implements UserDetails {
 
     @Id
@@ -28,11 +28,18 @@ public class User implements UserDetails {
     private String lastname;
     private String email;
     private String password;
+    private String phoneNumber;
+    private Date birthDate;
+    private double salary;
+    private int totalOrders;
+
 
     @Enumerated(EnumType.STRING)
+    @Column(name = "role", nullable = false)
     private Role role;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    @JsonManagedReference
     private List<Token> tokens;
 
     @Override

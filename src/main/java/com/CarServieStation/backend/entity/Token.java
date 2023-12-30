@@ -3,6 +3,7 @@ package com.CarServieStation.backend.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
@@ -39,5 +40,6 @@ public class Token {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
+    @JsonBackReference
     public User user;
 }

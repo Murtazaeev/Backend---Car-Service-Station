@@ -8,11 +8,13 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+import jakarta.persistence.Table;
 
 import static com.CarServieStation.backend.entity.Permission.*;
 
 @Getter
 @RequiredArgsConstructor
+@Table(name = "role") // Use the actual table name
 public enum Role {
 
     USER(Set.of(
