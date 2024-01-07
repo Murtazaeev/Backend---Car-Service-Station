@@ -4,7 +4,9 @@ package com.CarServieStation.backend.service;
 import com.CarServieStation.backend.dto.ChangePasswordRequest;
 import com.CarServieStation.backend.dto.RegisterRequest;
 import com.CarServieStation.backend.dto.UserResponse;
+import com.CarServieStation.backend.entity.Station;
 import com.CarServieStation.backend.entity.User;
+import com.CarServieStation.backend.repository.StationRepository;
 import com.CarServieStation.backend.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -14,7 +16,7 @@ import org.springframework.stereotype.Service;
 import java.security.Principal;
 import java.util.List;
 import java.util.stream.Collectors;
-import static com.CarServieStation.backend.entity.Role.EMPLOYEE;
+import static com.CarServieStation.backend.entity.Role.MANAGER;
 
 @Service
 @RequiredArgsConstructor
@@ -22,6 +24,8 @@ public class UserService {
 
     private final PasswordEncoder passwordEncoder;
     private final UserRepository repository;
+    private final StationRepository stationRepository;
+
     public void changePassword(ChangePasswordRequest request, Principal connectedUser) {
 
         var user = (User) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal();
@@ -65,7 +69,14 @@ public class UserService {
     }
 
     public void deleteUser(Integer userId) {
-        repository.findById(userId).orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
+        User user = repository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
+
+        if (user.getStation() != null) {
+            Station station = user.getStation();
+            station.setUser(null);
+            stationRepository.save(station);
+        }
         repository.deleteById(userId);
     }
 
@@ -89,8 +100,9 @@ public class UserService {
     }
 
 
-    public List<UserResponse> getAllEmployees() {
-        return repository.findByRole(EMPLOYEE).stream()
+    public List<UserResponse> getAllUnAssignedManagers() {
+        return repository.findByRole(MANAGER).stream()
+                .filter(user -> user.getStation() == null)
                 .map(this::convertToDto)
                 .collect(Collectors.toList());
     }
@@ -106,6 +118,7 @@ public class UserService {
         dto.setBirthDate(user.getBirthDate());
         dto.setSalary(user.getSalary());
         dto.setTotalOrders(user.getTotalOrders());
+        dto.setStationId(user.getStation() != null ? user.getStation().getId() : null);
         return dto;
     }
 

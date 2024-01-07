@@ -7,9 +7,7 @@ import com.CarServieStation.backend.dto.UserResponse;
 import com.CarServieStation.backend.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.security.Principal;
@@ -34,9 +32,9 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(service.createUser(request));
     }
 
-    @GetMapping("/employees")
-    public ResponseEntity<List<UserResponse>> getAllEmployees() {
-        List<UserResponse> employees = service.getAllEmployees();
+    @GetMapping("/managers")
+    public ResponseEntity<List<UserResponse>> getAllUnAssignedManagers() {
+        List<UserResponse> employees = service.getAllUnAssignedManagers();
         return ResponseEntity.ok(employees);
     }
 
