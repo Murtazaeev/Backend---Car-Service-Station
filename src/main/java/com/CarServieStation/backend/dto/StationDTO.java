@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
@@ -14,5 +16,6 @@ public class StationDTO {
     private Integer managerId;
     private String stationName;
     private StationColorType stationColorType;
+    private List<Integer> employeeIds;
 
 }

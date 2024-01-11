@@ -3,6 +3,7 @@ package com.CarServieStation.backend.controller;
 
 import com.CarServieStation.backend.dto.ChangePasswordRequest;
 import com.CarServieStation.backend.dto.RegisterRequest;
+import com.CarServieStation.backend.dto.UpdateUserRequest;
 import com.CarServieStation.backend.dto.UserResponse;
 import com.CarServieStation.backend.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -45,8 +46,19 @@ public class UserController {
     }
 
     @PutMapping("/{userId}")
-    public ResponseEntity<UserResponse> updateUser(@PathVariable Integer userId, @RequestBody RegisterRequest request) {
+    public ResponseEntity<UserResponse> updateUser(@PathVariable Integer userId, @RequestBody UpdateUserRequest request) {
         UserResponse updatedUser = service.updateUser(userId, request);
         return ResponseEntity.ok(updatedUser);
+    }
+
+    @GetMapping("/profile")
+    public ResponseEntity<UserResponse> getCurrentUserProfile(Principal principal) {
+        return ResponseEntity.ok(service.findUserByEmail(principal.getName()));
+    }
+
+    @GetMapping("/managers/all")
+    public ResponseEntity<List<UserResponse>> getAllManagers() {
+        List<UserResponse> managers = service.getAllManagers();
+        return ResponseEntity.ok(managers);
     }
 }

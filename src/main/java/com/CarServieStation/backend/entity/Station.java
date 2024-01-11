@@ -1,12 +1,16 @@
 package com.CarServieStation.backend.entity;
 
 
+import com.CarServieStation.backend.dto.Employee;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @Builder
@@ -30,4 +34,6 @@ public class Station {
     @JsonBackReference
     private User user;
 
+    @OneToMany(mappedBy = "station", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<Employee> employees = new ArrayList<>();
 }
