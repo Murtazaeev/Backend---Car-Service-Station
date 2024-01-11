@@ -42,7 +42,7 @@ public class User implements UserDetails {
     @JsonManagedReference
     private List<Token> tokens;
 
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    @OneToOne(mappedBy = "user", cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH}, fetch = FetchType.LAZY)
     private Station station;
 
     @Override

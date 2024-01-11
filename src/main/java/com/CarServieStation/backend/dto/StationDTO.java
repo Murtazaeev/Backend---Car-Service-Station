@@ -13,6 +13,7 @@ import java.util.List;
 @Getter
 @Setter
 public class StationDTO {
+    private Integer id;
     private Integer managerId;
     private String stationName;
     private StationColorType stationColorType;

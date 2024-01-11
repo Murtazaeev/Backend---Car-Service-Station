@@ -1,7 +1,6 @@
 package com.CarServieStation.backend.entity;
 
 
-import com.CarServieStation.backend.dto.Employee;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -34,6 +33,6 @@ public class Station {
     @JsonBackReference
     private User user;
 
-    @OneToMany(mappedBy = "station", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "station", cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH}, fetch = FetchType.LAZY)
     private List<Employee> employees = new ArrayList<>();
 }

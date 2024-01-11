@@ -46,7 +46,7 @@ public class UserService {
         // save the new password
         repository.save(user);
     }
-    public String createUser(RegisterRequest request) {
+    public UserResponse createUser(RegisterRequest request) {
         var dbUser = repository.findByEmail(request.getEmail());
 
         if (dbUser.isPresent()) {
@@ -65,8 +65,8 @@ public class UserService {
                 .totalOrders(request.getTotalOrders())
                 .build();
 
-        repository.save(user);
-        return "Employee created successfully";
+        User newUser = repository.save(user);
+        return convertToDto(newUser);
     }
 
     public void deleteUser(Integer userId) {

@@ -1,6 +1,6 @@
 package com.CarServieStation.backend.repository;
 
-import com.CarServieStation.backend.dto.Employee;
+import com.CarServieStation.backend.entity.Employee;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 

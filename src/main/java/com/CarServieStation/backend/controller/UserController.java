@@ -29,8 +29,9 @@ public class UserController {
         return ResponseEntity.ok().build();
     }
     @PostMapping
-    public ResponseEntity<String> createUser(@RequestBody RegisterRequest request) {
-        return ResponseEntity.status(HttpStatus.OK).body(service.createUser(request));
+    public ResponseEntity<UserResponse> createUser(@RequestBody RegisterRequest request) {
+        UserResponse newUserResponse = service.createUser(request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(newUserResponse);
     }
 
     @GetMapping("/managers")

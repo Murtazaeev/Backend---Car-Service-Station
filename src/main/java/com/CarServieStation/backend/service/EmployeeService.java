@@ -1,6 +1,6 @@
 package com.CarServieStation.backend.service;
 
-import com.CarServieStation.backend.dto.Employee;
+import com.CarServieStation.backend.entity.Employee;
 import com.CarServieStation.backend.repository.EmployeeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
