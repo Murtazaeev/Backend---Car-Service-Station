@@ -37,7 +37,7 @@ public class StationService {
 
         Station station = new Station();
         station.setStationName(stationRequestDTO.getStationName());
-        station.setStationColorType(stationRequestDTO.getStationColorType());
+        station.setColorType(stationRequestDTO.getColorType());
 
         if (stationRequestDTO.getManagerId() != null) {
             User manager = userRepository.findById(stationRequestDTO.getManagerId())
@@ -80,7 +80,7 @@ public class StationService {
 
         // Update station fields
         station.setStationName(stationRequestDTO.getStationName());
-        station.setStationColorType(stationRequestDTO.getStationColorType());
+        station.setColorType(stationRequestDTO.getColorType());
 
         // handle manager reassignment
         if (stationRequestDTO.getManagerId() != null) {
@@ -186,7 +186,7 @@ public class StationService {
         dto.setId(station.getId());
         dto.setManagerId(station.getUser() != null ? station.getUser().getId() : null);
         dto.setStationName(station.getStationName());
-        dto.setStationColorType(station.getStationColorType());
+        dto.setColorType(station.getColorType());
         dto.setEmployees(new ArrayList<>(station.getEmployees())); // Directly set the list of employees
         return dto;
     }

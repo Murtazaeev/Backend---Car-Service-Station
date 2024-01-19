@@ -26,7 +26,7 @@ public class Station {
     private String stationName;
 
     @Enumerated(EnumType.STRING)
-    private StationColorType stationColorType;
+    private ColorType colorType;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")

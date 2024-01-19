@@ -1,6 +1,6 @@
 package com.CarServieStation.backend.dto;
+import com.CarServieStation.backend.entity.ColorType;
 import com.CarServieStation.backend.entity.Employee;
-import com.CarServieStation.backend.entity.StationColorType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,6 +17,6 @@ public class StationResponseDto {
     private Integer id;
     private Integer managerId;
     private String stationName;
-    private StationColorType stationColorType;
+    private ColorType colorType;
     private List<Employee> employees;
 }
