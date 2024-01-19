@@ -82,8 +82,10 @@ public class SecurityConfiguration {
 
                                 .requestMatchers("/api/v1/stations").hasAnyRole(ADMIN.name())
                                 .requestMatchers("/api/v1/stations/employees").hasAnyRole(MANAGER.name())
+                                .requestMatchers("/api/v1/stations/{stationId}").hasAnyRole(MANAGER.name(), ADMIN.name())
                                 .requestMatchers("/api/v1/stations/**").hasAnyRole(ADMIN.name())
                                 .requestMatchers(GET, "/api/v1/stations/employees").hasAnyAuthority(MANAGER_READ.name())
+                                .requestMatchers(GET,"/api/v1/stations/{stationId}").hasAnyAuthority(MANAGER_READ.name(), ADMIN_READ.name())
                                 .requestMatchers(GET, "/api/v1/stations").hasAnyAuthority(ADMIN_READ.name())
                                 .requestMatchers(GET, "/api/v1/stations/**").hasAnyAuthority(ADMIN_READ.name())
                                 .requestMatchers(PUT, "/api/v1/stations/**").hasAnyAuthority(ADMIN_UPDATE.name())

@@ -1,10 +1,10 @@
 package com.CarServieStation.backend.controller;
 
 
-import com.CarServieStation.backend.dto.ChangePasswordRequest;
-import com.CarServieStation.backend.dto.RegisterRequest;
-import com.CarServieStation.backend.dto.UpdateUserRequest;
-import com.CarServieStation.backend.dto.UserResponse;
+import com.CarServieStation.backend.dto.ChangePasswordRequestDto;
+import com.CarServieStation.backend.dto.RegisterRequestDto;
+import com.CarServieStation.backend.dto.UpdateUserRequestDto;
+import com.CarServieStation.backend.dto.UserResponseDto;
 import com.CarServieStation.backend.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -22,21 +22,21 @@ public class UserController {
 
     @PatchMapping
     public ResponseEntity<?> changePassword(
-            @RequestBody ChangePasswordRequest request,
+            @RequestBody ChangePasswordRequestDto request,
             Principal connectedUser
     ) {
         service.changePassword(request, connectedUser);
         return ResponseEntity.ok().build();
     }
     @PostMapping
-    public ResponseEntity<UserResponse> createUser(@RequestBody RegisterRequest request) {
-        UserResponse newUserResponse = service.createUser(request);
-        return ResponseEntity.status(HttpStatus.CREATED).body(newUserResponse);
+    public ResponseEntity<UserResponseDto> createUser(@RequestBody RegisterRequestDto request) {
+        UserResponseDto newUserResponseDto = service.createUser(request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(newUserResponseDto);
     }
 
     @GetMapping("/managers")
-    public ResponseEntity<List<UserResponse>> getAllUnAssignedManagers() {
-        List<UserResponse> employees = service.getAllUnAssignedManagers();
+    public ResponseEntity<List<UserResponseDto>> getAllUnAssignedManagers() {
+        List<UserResponseDto> employees = service.getAllUnAssignedManagers();
         return ResponseEntity.ok(employees);
     }
 
@@ -47,19 +47,19 @@ public class UserController {
     }
 
     @PutMapping("/{userId}")
-    public ResponseEntity<UserResponse> updateUser(@PathVariable Integer userId, @RequestBody UpdateUserRequest request) {
-        UserResponse updatedUser = service.updateUser(userId, request);
+    public ResponseEntity<UserResponseDto> updateUser(@PathVariable Integer userId, @RequestBody UpdateUserRequestDto request) {
+        UserResponseDto updatedUser = service.updateUser(userId, request);
         return ResponseEntity.ok(updatedUser);
     }
 
     @GetMapping("/profile")
-    public ResponseEntity<UserResponse> getCurrentUserProfile(Principal principal) {
+    public ResponseEntity<UserResponseDto> getCurrentUserProfile(Principal principal) {
         return ResponseEntity.ok(service.findUserByEmail(principal.getName()));
     }
 
     @GetMapping("/managers/all")
-    public ResponseEntity<List<UserResponse>> getAllManagers() {
-        List<UserResponse> managers = service.getAllManagers();
+    public ResponseEntity<List<UserResponseDto>> getAllManagers() {
+        List<UserResponseDto> managers = service.getAllManagers();
         return ResponseEntity.ok(managers);
     }
 }

@@ -1,8 +1,8 @@
 package com.CarServieStation.backend.controller;
 
-import com.CarServieStation.backend.dto.AuthenticationRequest;
-import com.CarServieStation.backend.dto.AuthenticationResponse;
-import com.CarServieStation.backend.dto.RegisterRequest;
+import com.CarServieStation.backend.dto.AuthenticationRequestDto;
+import com.CarServieStation.backend.dto.AuthenticationResponseDto;
+import com.CarServieStation.backend.dto.RegisterRequestDto;
 import com.CarServieStation.backend.service.AuthenticationService;
 import com.CarServieStation.backend.service.LogoutService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -24,15 +24,15 @@ public class AuthenticationController {
     private final LogoutService logoutService;
 
     @PostMapping("/register")
-    public ResponseEntity<AuthenticationResponse> register(
-            @RequestBody RegisterRequest request
+    public ResponseEntity<AuthenticationResponseDto> register(
+            @RequestBody RegisterRequestDto request
     ) {
         return ResponseEntity.ok(service.register(request));
     }
 
     @PostMapping("/authenticate")
-    public ResponseEntity<AuthenticationResponse> authenticate(
-            @RequestBody AuthenticationRequest request
+    public ResponseEntity<AuthenticationResponseDto> authenticate(
+            @RequestBody AuthenticationRequestDto  request
     ) {
         return ResponseEntity.ok(service.authenticate(request));
     }

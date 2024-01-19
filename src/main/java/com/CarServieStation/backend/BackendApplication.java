@@ -1,12 +1,7 @@
 package com.CarServieStation.backend;
 
-import com.CarServieStation.backend.dto.RegisterRequest;
-import com.CarServieStation.backend.entity.Role;
-import com.CarServieStation.backend.service.AuthenticationService;
-import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.Bean;
 
 @SpringBootApplication
 public class BackendApplication {
@@ -20,7 +15,7 @@ public class BackendApplication {
 //			AuthenticationService service
 //	) {
 //		return args -> {
-//			var admin = RegisterRequest.builder()
+//			var admin = RegisterRequestDto.builder()
 //					.firstname("Admin")
 //					.lastname("Admin")
 //					.email("admin@mail.com")
@@ -29,7 +24,7 @@ public class BackendApplication {
 //					.build();
 //			System.out.println("Admin token: " + service.register(admin).getAccessToken());
 //
-//			var manager = RegisterRequest.builder()
+//			var manager = RegisterRequestDto.builder()
 //					.firstname("Admin")
 //					.lastname("Admin")
 //					.email("manager@mail.com")

@@ -12,7 +12,7 @@ import java.util.List;
 @AllArgsConstructor
 @Getter
 @Setter
-public class StationDTO {
+public class StationRequestDto {
     private Integer id;
     private Integer managerId;
     private String stationName;

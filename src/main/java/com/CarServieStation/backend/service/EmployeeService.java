@@ -1,9 +1,11 @@
 package com.CarServieStation.backend.service;
 
 import com.CarServieStation.backend.entity.Employee;
+import com.CarServieStation.backend.exception.NotFoundOrAlreadyExistException;
 import com.CarServieStation.backend.repository.EmployeeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -13,6 +15,8 @@ public class EmployeeService {
     @Autowired
     private EmployeeRepository employeeRepository;
 
+
+    @Transactional
     public Employee createEmployee(Employee employee) {
         return employeeRepository.save(employee);
     }
@@ -29,9 +33,11 @@ public class EmployeeService {
         return employeeRepository.findAllUnassignedEmployees();
     }
 
+
+    @Transactional
     public Employee updateEmployee(Integer id, Employee employeeDetails) {
         Employee employee = employeeRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Employee not found with id: " + id));
+                .orElseThrow(() -> new NotFoundOrAlreadyExistException("Employee not found with id: " + id));
         employee.setFirstname(employeeDetails.getFirstname());
         employee.setLastname(employeeDetails.getLastname());
         employee.setBirthDate(employeeDetails.getBirthDate());
@@ -42,7 +48,7 @@ public class EmployeeService {
 
     public void deleteEmployee(Integer id) {
         Employee employee = employeeRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Employee not found with id: " + id));
+                .orElseThrow(() -> new NotFoundOrAlreadyExistException("Employee not found with id: " + id));
         if (employee.getStation() != null) {
             employee.getStation().getEmployees().remove(employee);
             employee.setStation(null);

@@ -11,7 +11,7 @@ import java.util.Date;
 @AllArgsConstructor
 @Getter
 @Setter
-public class UserResponse {
+public class UserResponseDto {
     private Integer id;
     private String firstname;
     private String lastname;

@@ -1,22 +1,25 @@
 package com.CarServieStation.backend.service;
 
 
-import com.CarServieStation.backend.dto.ChangePasswordRequest;
-import com.CarServieStation.backend.dto.RegisterRequest;
-import com.CarServieStation.backend.dto.UpdateUserRequest;
-import com.CarServieStation.backend.dto.UserResponse;
+import com.CarServieStation.backend.dto.ChangePasswordRequestDto;
+import com.CarServieStation.backend.dto.RegisterRequestDto;
+import com.CarServieStation.backend.dto.UpdateUserRequestDto;
+import com.CarServieStation.backend.dto.UserResponseDto;
 import com.CarServieStation.backend.entity.Station;
 import com.CarServieStation.backend.entity.User;
+import com.CarServieStation.backend.exception.NotFoundOrAlreadyExistException;
 import com.CarServieStation.backend.repository.StationRepository;
 import com.CarServieStation.backend.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.security.Principal;
 import java.util.List;
 import java.util.stream.Collectors;
+
 import static com.CarServieStation.backend.entity.Role.MANAGER;
 
 @Service
@@ -27,7 +30,9 @@ public class UserService {
     private final UserRepository repository;
     private final StationRepository stationRepository;
 
-    public void changePassword(ChangePasswordRequest request, Principal connectedUser) {
+
+    @Transactional
+    public void changePassword(ChangePasswordRequestDto request, Principal connectedUser) {
 
         var user = (User) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal();
 
@@ -46,11 +51,13 @@ public class UserService {
         // save the new password
         repository.save(user);
     }
-    public UserResponse createUser(RegisterRequest request) {
+
+    @Transactional
+    public UserResponseDto createUser(RegisterRequestDto request) {
         var dbUser = repository.findByEmail(request.getEmail());
 
         if (dbUser.isPresent()) {
-            throw new RuntimeException("User already exists in the database!");
+            throw new NotFoundOrAlreadyExistException("User already exists in the database!");
         }
 
         var user = User.builder()
@@ -69,9 +76,11 @@ public class UserService {
         return convertToDto(newUser);
     }
 
+
+    @Transactional
     public void deleteUser(Integer userId) {
         User user = repository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
+                .orElseThrow(() -> new NotFoundOrAlreadyExistException("User not found with id: " + userId));
 
         if (user.getStation() != null) {
             Station station = user.getStation();
@@ -81,8 +90,9 @@ public class UserService {
         repository.deleteById(userId);
     }
 
-    public UserResponse updateUser(Integer userId, UpdateUserRequest updateRequest) {
-        User user = repository.findById(userId).orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
+    @Transactional
+    public UserResponseDto updateUser(Integer userId, UpdateUserRequestDto updateRequest) {
+        User user = repository.findById(userId).orElseThrow(() -> new NotFoundOrAlreadyExistException("User not found with id: " + userId));
 
         // Update fields
         user.setFirstname(updateRequest.getFirstname());
@@ -100,21 +110,22 @@ public class UserService {
     }
 
 
-    public List<UserResponse> getAllUnAssignedManagers() {
+    public List<UserResponseDto> getAllUnAssignedManagers() {
         return repository.findByRole(MANAGER).stream()
                 .filter(user -> user.getStation() == null)
                 .map(this::convertToDto)
                 .collect(Collectors.toList());
     }
-    public List<UserResponse> getAllManagers() {
+
+    public List<UserResponseDto> getAllManagers() {
         return repository.findByRole(MANAGER).stream()
                 .map(this::convertToDto)
                 .collect(Collectors.toList());
     }
 
 
-    private UserResponse convertToDto(User user) {
-        UserResponse dto = new UserResponse();
+    private UserResponseDto convertToDto(User user) {
+        UserResponseDto dto = new UserResponseDto();
         dto.setId(user.getId());
         dto.setFirstname(user.getFirstname());
         dto.setLastname(user.getLastname());
@@ -127,9 +138,10 @@ public class UserService {
         dto.setStationId(user.getStation() != null ? user.getStation().getId() : null);
         return dto;
     }
-    public UserResponse findUserByEmail(String email) {
+
+    public UserResponseDto findUserByEmail(String email) {
         return convertToDto(repository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found")));
+                .orElseThrow(() -> new NotFoundOrAlreadyExistException("User not found")));
     }
 
 }
