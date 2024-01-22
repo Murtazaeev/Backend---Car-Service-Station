@@ -2,8 +2,8 @@ package com.CarServieStation.backend.controller;
 
 
 import com.CarServieStation.backend.dto.ClientRequestDto;
+import com.CarServieStation.backend.dto.ClientResponseDto;
 import com.CarServieStation.backend.service.ClientService;
-import com.CarServieStation.backend.entity.Client;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,17 +17,17 @@ public class ClientController {
     private ClientService clientService;
 
     @PostMapping
-    public ResponseEntity<Client> createClient(@RequestBody ClientRequestDto clientRequestDto) {
+    public ResponseEntity<ClientResponseDto> createClient(@RequestBody ClientRequestDto clientRequestDto) {
         return ResponseEntity.ok(clientService.createClientWithCars(clientRequestDto));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Client> getClient(@PathVariable Integer id) {
+    public ResponseEntity<ClientResponseDto> getClient(@PathVariable Integer id) {
         return ResponseEntity.ok(clientService.getClient(id));
     }
 
     @GetMapping
-    public ResponseEntity<List<Client>> getAllClients() {
+    public ResponseEntity<List<ClientResponseDto>> getAllClients() {
         return ResponseEntity.ok(clientService.getAllClients());
     }
 

@@ -18,10 +18,15 @@ public class Car {
     private Integer id;
     private String model;
     private String make;
+
+
+    @Column(unique = true)
     private String licenceNumber;
+
 
     @Enumerated(EnumType.STRING)
     private ColorType color;
+
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "client_id")

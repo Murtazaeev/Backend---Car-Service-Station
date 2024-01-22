@@ -35,4 +35,8 @@ public class Station {
 
     @OneToMany(mappedBy = "station", cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH}, fetch = FetchType.LAZY)
     private List<Employee> employees = new ArrayList<>();
+
+    @OneToMany(mappedBy = "station", cascade = CascadeType.ALL)
+    private List<CustomerOrder> customerOrders = new ArrayList<>();
+
 }

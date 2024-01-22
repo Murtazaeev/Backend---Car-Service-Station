@@ -6,7 +6,8 @@ import com.CarServieStation.backend.dto.RegisterRequestDto;
 import com.CarServieStation.backend.entity.Token;
 import com.CarServieStation.backend.entity.TokenType;
 import com.CarServieStation.backend.entity.User;
-import com.CarServieStation.backend.exception.NotFoundOrAlreadyExistException;
+import com.CarServieStation.backend.exception.AlreadyExistsException;
+import com.CarServieStation.backend.exception.NotFoundException;
 import com.CarServieStation.backend.repository.TokenRepository;
 import com.CarServieStation.backend.repository.UserRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -36,7 +37,7 @@ public class AuthenticationService {
     public AuthenticationResponseDto register(RegisterRequestDto request) {
         var dbUser = repository.findByEmail(request.getEmail());
         if(dbUser.isPresent()) {
-            throw new NotFoundOrAlreadyExistException("User already exists in the database!");
+            throw new AlreadyExistsException("User already exists in the database!");
         }
         var user = User.builder()
                 .firstname(request.getFirstname())
@@ -66,7 +67,7 @@ public class AuthenticationService {
                 )
         );
         var user = repository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new NotFoundOrAlreadyExistException("Email not found " + request.getEmail()));
+                .orElseThrow(() -> new NotFoundException("Email not found " + request.getEmail()));
         var jwtToken = jwtService.generateToken(user);
         var refreshToken = jwtService.generateRefreshToken(user);
         revokeAllUserTokens(user);

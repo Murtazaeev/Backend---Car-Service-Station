@@ -5,9 +5,9 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class NotFoundOrAlreadyExistException extends RuntimeException {
+public class NotFoundException extends RuntimeException {
 
-    public NotFoundOrAlreadyExistException(String message) {
+    public NotFoundException(String message) {
         super(message);
     }
 }
