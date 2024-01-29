@@ -1,6 +1,7 @@
 package com.CarServieStation.backend.controller;
 
 
+import com.CarServieStation.backend.dto.CarChartRequestDto;
 import com.CarServieStation.backend.dto.CarResponseDto;
 import com.CarServieStation.backend.entity.Car;
 import com.CarServieStation.backend.service.CarService;
@@ -9,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/cars")
@@ -54,4 +56,11 @@ public class CarController {
         List<CarResponseDto> unassignedCars = carService.getUnassignedCars();
         return ResponseEntity.ok(unassignedCars);
     }
+
+    @PostMapping("/chart")
+    public ResponseEntity<Map<String, Long>> getCarChartData(@RequestBody CarChartRequestDto request) {
+        Map<String, Long> chartData = carService.getCarChartData(request);
+        return ResponseEntity.ok(chartData);
+    }
+
 }

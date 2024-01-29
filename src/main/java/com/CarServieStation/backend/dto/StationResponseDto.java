@@ -15,7 +15,7 @@ import java.util.List;
 public class StationResponseDto {
 
     private Integer id;
-    private Integer managerId;
+    private StationManagerResponse manager;
     private String stationName;
     private ColorType colorType;
     private List<Employee> employees;

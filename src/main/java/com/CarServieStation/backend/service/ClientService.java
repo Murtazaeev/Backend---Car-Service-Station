@@ -36,26 +36,19 @@ public class ClientService {
         client.setPhoneNumber(request.getPhoneNumber());
 
         // Check if the request contains cars
-        if (request.getCars() != null && !request.getCars().isEmpty()) {
-            List<Car> cars = new ArrayList<>();
+        if (request.getCarIds() != null && !request.getCarIds().isEmpty()) {
+            for (Integer carId : request.getCarIds()) {
+                Car car = carRepository.findById(carId)
+                        .orElseThrow(() -> new NotFoundException("Car not found with id: " + carId));
 
-            for (CarRequestDto carDto : request.getCars()) {
-                // Check if a car with the given licence number already exists
-                Optional<Car> existingCar = carRepository.findByLicenceNumber(carDto.getLicenceNumber());
-                if (existingCar.isPresent()) {
-                    throw new AlreadyExistsException("A car with licence number " + carDto.getLicenceNumber() + " already exists.");
+                // Check if the car is already assigned
+                if (car.getClient() != null) {
+                    throw new AlreadyExistsException("Car with id " + carId + " is already assigned.");
                 }
-
-                Car newCar = new Car();
-                newCar.setModel(carDto.getModel());
-                newCar.setMake(carDto.getMake());
-                newCar.setLicenceNumber(carDto.getLicenceNumber());
-                newCar.setColor(carDto.getColorType());
-                newCar.setClient(client);
-                cars.add(newCar);
+                car.setClient(client);
+                client.getCars().add(car);
             }
 
-            client.setCars(cars);
         }
 
         Client savedClient = clientRepository.save(client);

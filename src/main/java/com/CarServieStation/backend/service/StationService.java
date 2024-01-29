@@ -2,6 +2,7 @@ package com.CarServieStation.backend.service;
 
 
 import com.CarServieStation.backend.dto.ManagedStationDto;
+import com.CarServieStation.backend.dto.StationManagerResponse;
 import com.CarServieStation.backend.dto.StationRequestDto;
 import com.CarServieStation.backend.dto.StationResponseDto;
 import com.CarServieStation.backend.entity.Employee;
@@ -186,10 +187,16 @@ public class StationService {
     private StationResponseDto mapToStationDTO(Station station) {
         StationResponseDto dto = new StationResponseDto();
         dto.setId(station.getId());
-        dto.setManagerId(station.getUser() != null ? station.getUser().getId() : null);
         dto.setStationName(station.getStationName());
         dto.setColorType(station.getColorType());
         dto.setEmployees(new ArrayList<>(station.getEmployees())); // Directly set the list of employees
+        // Set manager details
+        if (station.getUser() != null) {
+            StationManagerResponse manager = new StationManagerResponse();
+            manager.setManagerId(station.getUser().getId());
+            manager.setManagerName(station.getUser().getFirstname() + " " + station.getUser().getLastname());
+            dto.setManager(manager);
+        }
         return dto;
     }
 }

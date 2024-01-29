@@ -2,6 +2,7 @@ package com.CarServieStation.backend.entity;
 
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -37,6 +38,7 @@ public class Station {
     private List<Employee> employees = new ArrayList<>();
 
     @OneToMany(mappedBy = "station", cascade = CascadeType.ALL)
+    @JsonIgnore
     private List<CustomerOrder> customerOrders = new ArrayList<>();
 
 }

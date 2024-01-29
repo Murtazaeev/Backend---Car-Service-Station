@@ -10,9 +10,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Random;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.ZoneId;
+import java.time.format.TextStyle;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -168,6 +170,70 @@ public class OrderService {
                 .mapToObj(Integer::toString)
                 .reduce("", String::concat);
     }
+
+
+    @Transactional
+    public Map<String, Long> getClientsCount(TimePeriod timePeriod) {
+        LocalDate startDate = LocalDate.now();
+        LocalDate endDate;
+
+        switch (timePeriod) {
+            case WEEK:
+                endDate = startDate.plusWeeks(1);
+                break;
+            case MONTH:
+                endDate = startDate.plusMonths(1);
+                break;
+            default:
+                throw new IllegalArgumentException("Invalid time period type");
+        }
+
+        Date start = Date.from(startDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+        Date end = Date.from(endDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+
+        List<CustomerOrder> orders = orderRepository.findAllBySavedDateBetween(start, end);
+        Map<String, Long> clientsCount = new HashMap<>();
+
+        for (CustomerOrder order : orders) {
+            LocalDate orderDate = order.getSavedDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+            String key;
+
+            if (timePeriod == TimePeriod.WEEK) {
+                key = orderDate.getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.getDefault());
+            } else { // TimePeriod.MONTH
+                key = orderDate.getMonth().getDisplayName(TextStyle.FULL, Locale.getDefault());
+            }
+
+            clientsCount.merge(key, 1L, Long::sum);
+        }
+
+        return clientsCount;
+    }
+
+
+
+    public double calculateCostForPeriod(TimePeriod period) {
+        LocalDate endDate = LocalDate.now();
+        LocalDate startDate;
+
+        switch (period) {
+            case WEEK:
+                startDate = endDate.minusWeeks(1);
+                break;
+            case MONTH:
+                startDate = endDate.minusMonths(1);
+                break;
+            default:
+                throw new IllegalArgumentException("Invalid period. Allowed values are 'WEEK' or 'MONTH'.");
+        }
+
+        // Convert LocalDate to Date
+        Date startDateTime = Date.from(startDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+        Date endDateTime = Date.from(endDate.atTime(LocalTime.MAX).atZone(ZoneId.systemDefault()).toInstant());
+
+        return orderRepository.calculateTotalCostBetweenDates(startDateTime, endDateTime);
+    }
+
 
 
     private OrderResponseDto convertToOrderResponseDto(CustomerOrder customerOrder) {
