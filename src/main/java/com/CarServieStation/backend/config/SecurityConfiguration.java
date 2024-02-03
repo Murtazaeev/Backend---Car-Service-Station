@@ -31,20 +31,7 @@ import static org.springframework.http.HttpMethod.*;
 @EnableMethodSecurity
 public class SecurityConfiguration {
 
-    private static final String[] WHITE_LIST_URL = {
-//            "/api/v1/demo-controller/**",
-            "/api/v1/auth/**",
-            "/dumb",
-            "/v2/api-docs",
-            "/v3/api-docs",
-            "/v3/api-docs/**",
-            "/swagger-resources",
-            "/swagger-resources/**",
-            "/configuration/ui",
-            "/configuration/security",
-            "/swagger-ui/**",
-            "/webjars/**",
-            "/swagger-ui.html"};
+    private static final String[] WHITE_LIST_URL = {"/api/v1/auth/**", "/test"};
 
     private final JwtAuthenticationFilter jwtAuthFilter;
     private final AuthenticationProvider authenticationProvider;
@@ -86,9 +73,9 @@ public class SecurityConfiguration {
                                 .requestMatchers("/api/v1/stations/**").hasAnyRole(ADMIN.name())
                                 .requestMatchers(GET, "/api/v1/stations/employees").hasAnyAuthority(MANAGER_READ.name())
                                 .requestMatchers(GET, "/api/v1/stations/{stationId}").hasAnyAuthority(MANAGER_READ.name(), ADMIN_READ.name())
-                                .requestMatchers(GET, "/api/v1/stations").hasAnyAuthority(ADMIN_READ.name())
-                                .requestMatchers(GET, "/api/v1/stations/**").hasAnyAuthority(ADMIN_READ.name())
-                                .requestMatchers(PUT, "/api/v1/stations/**").hasAnyAuthority(ADMIN_UPDATE.name())
+                                .requestMatchers(GET, "/api/v1/stations").hasAnyAuthority(ADMIN_READ.name(), MANAGER_READ.name())
+                                .requestMatchers(GET, "/api/v1/stations/**").hasAnyAuthority(ADMIN_READ.name(),MANAGER_READ.name())
+                                .requestMatchers(PUT, "/api/v1/stations/**").hasAnyAuthority(ADMIN_UPDATE.name(), MANAGER_UPDATE.name())
                                 .requestMatchers(POST, "/api/v1/stations/**").hasAnyAuthority(ADMIN_CREATE.name())
                                 .requestMatchers(DELETE, "/api/v1/stations/**").hasAnyAuthority(ADMIN_DELETE.name())
                                 .requestMatchers(GET,"/api/v1/demo-controller/user").hasAnyAuthority(USER_READ.name(), MANAGER_READ.name(), ADMIN_READ.name())                                .requestMatchers(GET, "/api/v1/demo-controller/user").hasAnyAuthority(USER_READ.name(), MANAGER_READ.name(), ADMIN_READ.name())

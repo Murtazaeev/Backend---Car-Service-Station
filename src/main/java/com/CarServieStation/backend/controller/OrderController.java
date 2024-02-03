@@ -5,6 +5,7 @@ import com.CarServieStation.backend.dto.ClientCountRequestDto;
 import com.CarServieStation.backend.dto.OrderRequestDto;
 import com.CarServieStation.backend.dto.OrderResponseDto;
 import com.CarServieStation.backend.dto.TimePeriodRequest;
+import com.CarServieStation.backend.entity.OrderState;
 import com.CarServieStation.backend.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -62,6 +63,27 @@ public class OrderController {
         double cost = orderService.calculateCostForPeriod(request.getTimePeriod());
         return ResponseEntity.ok(cost);
     }
+
+
+    @GetMapping("/state/{state}")
+    public ResponseEntity<List<OrderResponseDto>> getOrdersByState(@PathVariable("state") String state) {
+        OrderState orderState = OrderState.valueOf(state.toUpperCase());
+        List<OrderResponseDto> orders = orderService.getOrdersByState(orderState);
+        return ResponseEntity.ok(orders);
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<List<OrderResponseDto>> searchOrdersByClientNameOrSurname(@RequestParam String name) {
+        List<OrderResponseDto> orders = orderService.searchOrdersByClientNameOrSurname(name);
+        return ResponseEntity.ok(orders);
+    }
+
+    @GetMapping("/stations/count")
+    public ResponseEntity<Map<String, Object>> getStationsCountAndGroup() {
+        Map<String, Object> result = orderService.getStationsCountAndPercentage();
+        return ResponseEntity.ok(result);
+    }
+
 
 
 }

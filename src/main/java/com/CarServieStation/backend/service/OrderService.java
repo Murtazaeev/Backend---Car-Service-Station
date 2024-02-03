@@ -10,9 +10,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.ZoneId;
+import java.time.temporal.TemporalAdjusters;
 import java.time.format.TextStyle;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -174,37 +176,44 @@ public class OrderService {
 
     @Transactional
     public Map<String, Long> getClientsCount(TimePeriod timePeriod) {
-        LocalDate startDate = LocalDate.now();
-        LocalDate endDate;
+        ZoneId defaultZoneId = ZoneId.systemDefault();
+        LocalDate now = LocalDate.now();
+        Map<String, Long> clientsCount = new LinkedHashMap<>();
 
-        switch (timePeriod) {
-            case WEEK:
-                endDate = startDate.plusWeeks(1);
-                break;
-            case MONTH:
-                endDate = startDate.plusMonths(1);
-                break;
-            default:
-                throw new IllegalArgumentException("Invalid time period type");
-        }
+        if (timePeriod == TimePeriod.WEEK) {
+            LocalDate startDate = now.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
+            LocalDate endDate = now.with(TemporalAdjusters.nextOrSame(DayOfWeek.SUNDAY));
 
-        Date start = Date.from(startDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
-        Date end = Date.from(endDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
-
-        List<CustomerOrder> orders = orderRepository.findAllBySavedDateBetween(start, end);
-        Map<String, Long> clientsCount = new HashMap<>();
-
-        for (CustomerOrder order : orders) {
-            LocalDate orderDate = order.getSavedDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-            String key;
-
-            if (timePeriod == TimePeriod.WEEK) {
-                key = orderDate.getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.getDefault());
-            } else { // TimePeriod.MONTH
-                key = orderDate.getMonth().getDisplayName(TextStyle.FULL, Locale.getDefault());
+            // Initialize map for the week
+            for (DayOfWeek day : DayOfWeek.values()) {
+                clientsCount.put(day.getDisplayName(TextStyle.FULL, Locale.getDefault()), 0L);
             }
 
-            clientsCount.merge(key, 1L, Long::sum);
+            Date start = Date.from(startDate.atStartOfDay(defaultZoneId).toInstant());
+            Date end = Date.from(endDate.plusDays(1).atStartOfDay(defaultZoneId).toInstant());
+            List<CustomerOrder> orders = orderRepository.findAllBySavedDateBetween(start, end);
+
+            // Aggregate weekly counts
+            orders.forEach(order -> {
+                LocalDate orderDate = order.getSavedDate().toInstant().atZone(defaultZoneId).toLocalDate();
+                String dayOfWeek = orderDate.getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.getDefault());
+                clientsCount.merge(dayOfWeek, 1L, Long::sum);
+            });
+
+        } else if (timePeriod == TimePeriod.MONTH) {
+            LocalDate startDate = now.minusYears(1).plusDays(1); // Start from one year ago plus one day to include today's date last year
+            LocalDate endDate = now;
+
+            Date start = Date.from(startDate.atStartOfDay(defaultZoneId).toInstant());
+            Date end = Date.from(endDate.plusDays(1).atStartOfDay(defaultZoneId).toInstant());
+            List<Object[]> monthlyCounts = orderRepository.findMonthlyOrderCounts(start, end);
+
+            // Process and map the monthly counts
+            monthlyCounts.forEach(obj -> {
+                String monthYearKey = (String) obj[0];
+                Long count = (Long) obj[1];
+                clientsCount.put(monthYearKey, count);
+            });
         }
 
         return clientsCount;
@@ -234,6 +243,37 @@ public class OrderService {
         return orderRepository.calculateTotalCostBetweenDates(startDateTime, endDateTime);
     }
 
+    public List<OrderResponseDto> getOrdersByState(OrderState state) {
+        return orderRepository.findAllByState(state).stream()
+                .map(this::convertToOrderResponseDto)
+                .collect(Collectors.toList());
+    }
+
+    public List<OrderResponseDto> searchOrdersByClientNameOrSurname(String name) {
+        return orderRepository.findByClientNameOrSurname(name).stream()
+                .map(this::convertToOrderResponseDto)
+                .collect(Collectors.toList());
+    }
+
+    public Map<String, Object> getStationsCountAndPercentage() {
+        List<Object[]> stationCounts = orderRepository.countOrdersByStation();
+        long totalStations = stationCounts.stream().mapToLong(e -> (long) e[1]).sum();
+
+        List<Map<String, Object>> stationsGroupBy = stationCounts.stream().map(entry -> {
+            Map<String, Object> map = new HashMap<>();
+            long count = (long) entry[1];
+            double percentage = (double) count / totalStations * 100; // Calculate percentage
+            map.put("stationId", entry[0]);
+            map.put("count", count);
+            map.put("percentage", Math.round(percentage * 100.0) / 100.0); // Round to 2 decimal places
+            return map;
+        }).collect(Collectors.toList());
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("totalStations", totalStations);
+        result.put("stationsGroupBy", stationsGroupBy);
+        return result;
+    }
 
 
     private OrderResponseDto convertToOrderResponseDto(CustomerOrder customerOrder) {
