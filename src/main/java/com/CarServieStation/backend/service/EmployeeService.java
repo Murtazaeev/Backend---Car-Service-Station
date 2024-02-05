@@ -1,5 +1,6 @@
 package com.CarServieStation.backend.service;
 
+import com.CarServieStation.backend.dto.EmployeePatchDto;
 import com.CarServieStation.backend.entity.Employee;
 import com.CarServieStation.backend.exception.NotFoundException;
 import com.CarServieStation.backend.repository.EmployeeRepository;
@@ -35,14 +36,15 @@ public class EmployeeService {
 
 
     @Transactional
-    public Employee updateEmployee(Integer id, Employee employeeDetails) {
+    public Employee updateEmployee(Integer id, EmployeePatchDto employeeDetails) {
         Employee employee = employeeRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Employee not found with id: " + id));
         employee.setFirstname(employeeDetails.getFirstname());
         employee.setLastname(employeeDetails.getLastname());
         employee.setBirthDate(employeeDetails.getBirthDate());
         employee.setEmail(employeeDetails.getEmail());
-        employee.setStation(employeeDetails.getStation());
+        employee.setPhoneNumber(employeeDetails.getPhoneNumber());
+        employee.setSalary(employeeDetails.getSalary());
         return employeeRepository.save(employee);
     }
 

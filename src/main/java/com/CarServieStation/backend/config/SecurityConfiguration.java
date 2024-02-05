@@ -59,11 +59,11 @@ public class SecurityConfiguration {
                                 .requestMatchers(DELETE, "/api/v1/users/**").hasAnyAuthority(ADMIN_DELETE.name())
 
                                 .requestMatchers("/api/v1/employees").hasAnyRole(ADMIN.name())
-                                .requestMatchers("/api/v1/employees/**").hasAnyRole(ADMIN.name())
+                                .requestMatchers("/api/v1/employees/**").hasAnyRole(ADMIN.name(), MANAGER.name())
                                 .requestMatchers(GET, "/api/v1/employees").hasAnyAuthority(ADMIN_READ.name())
                                 .requestMatchers(POST, "/api/v1/employees").hasAnyAuthority(ADMIN_CREATE.name())
                                 .requestMatchers(GET, "/api/v1/employees/**").hasAnyAuthority(ADMIN_READ.name())
-                                .requestMatchers(PUT, "/api/v1/employees/**").hasAnyAuthority(ADMIN_UPDATE.name())
+                                .requestMatchers(PUT, "/api/v1/employees/**").hasAnyAuthority(ADMIN_UPDATE.name(), MANAGER_UPDATE.name())
                                 .requestMatchers(POST, "/api/v1/employees/**").hasAnyAuthority(ADMIN_CREATE.name())
                                 .requestMatchers(DELETE, "/api/v1/employees/**").hasAnyAuthority(ADMIN_DELETE.name())
 

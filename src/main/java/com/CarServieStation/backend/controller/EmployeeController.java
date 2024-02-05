@@ -1,5 +1,6 @@
 package com.CarServieStation.backend.controller;
 
+import com.CarServieStation.backend.dto.EmployeePatchDto;
 import com.CarServieStation.backend.entity.Employee;
 import com.CarServieStation.backend.service.EmployeeService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,8 +38,8 @@ public class EmployeeController {
         return ResponseEntity.ok(employeeService.getAllUnassignedEmployees());
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<Employee> updateEmployee(@PathVariable Integer id, @RequestBody Employee employeeDetails) {
+    @PatchMapping("/{id}")
+    public ResponseEntity<Employee> updateEmployee(@PathVariable Integer id, @RequestBody EmployeePatchDto employeeDetails) {
         return ResponseEntity.ok(employeeService.updateEmployee(id, employeeDetails));
     }
 
