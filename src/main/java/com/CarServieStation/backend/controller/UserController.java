@@ -62,4 +62,10 @@ public class UserController {
         List<UserResponseDto> managers = service.getAllManagers();
         return ResponseEntity.ok(managers);
     }
+
+    @GetMapping("/search")
+    public ResponseEntity<List<UserResponseDto>> searchUsers(@RequestParam String name) {
+        List<UserResponseDto> users = service.searchUsersByFirstNameOrLastName(name);
+        return ResponseEntity.ok(users);
+    }
 }

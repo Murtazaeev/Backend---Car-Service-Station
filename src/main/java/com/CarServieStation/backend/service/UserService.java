@@ -12,6 +12,7 @@ import com.CarServieStation.backend.exception.WrongInputException;
 import com.CarServieStation.backend.repository.StationRepository;
 import com.CarServieStation.backend.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Service;
@@ -28,9 +29,18 @@ import static com.CarServieStation.backend.entity.Role.MANAGER;
 public class UserService {
 
     private final PasswordEncoder passwordEncoder;
+    @Autowired
     private final UserRepository repository;
     private final StationRepository stationRepository;
 
+
+
+    public List<UserResponseDto> searchUsersByFirstNameOrLastName(String name) {
+        List<User> users = repository.findByFirstnameOrLastname(name, name);
+        return users.stream()
+                .map(user -> new UserResponseDto(user.getId(), user.getFirstname(), user.getLastname(), user.getEmail(), user.getRole().name(), user.getPhoneNumber(), user.getBirthDate(), user.getSalary(), user.getTotalOrders(), (user.getStation() != null ? user.getStation().getId() : null)))
+                .collect(Collectors.toList());
+    }
 
     @Transactional
     public void changePassword(ChangePasswordRequestDto request, Principal connectedUser) {

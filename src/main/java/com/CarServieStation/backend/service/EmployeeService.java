@@ -55,4 +55,8 @@ public class EmployeeService {
         }
         employeeRepository.delete(employee);
     }
+
+    public List<Employee> searchEmployeesByFirstNameOrLastName(String name) {
+        return employeeRepository.findByFirstnameOrLastname(name, name);
+    }
 }

@@ -47,4 +47,11 @@ public class EmployeeController {
         employeeService.deleteEmployee(id);
         return ResponseEntity.ok().build();
     }
+
+    @GetMapping("/search")
+    public ResponseEntity<List<Employee>> searchEmployees(@RequestParam String name) {
+        List<Employee> employees = employeeService.searchEmployeesByFirstNameOrLastName(name);
+        return ResponseEntity.ok(employees);
+    }
+
 }
